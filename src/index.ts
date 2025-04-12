@@ -1,50 +1,30 @@
-import { Project } from "ts-morph";
-import { analyzeComponent } from "./structural";
-import { ComponentAnalysis } from "./types";
-import fs from "fs/promises";
-import path from "path";
+import { analyze, type AnalysisResult } from './indexer';
+import fs from 'fs/promises';
+import path from 'path';
 
-export async function analyzeCodebase(projectPath: string) {
-  console.log(`Analyzing project at: ${projectPath}`);
-  
-  const project = new Project({
-    tsConfigFilePath: path.join(projectPath, "tsconfig.json")
-  });
+export async function run(projectPath: string): Promise<AnalysisResult> {
+  try {
+    const analysis = await analyze(projectPath);
+    const outputPath = path.join(projectPath, ".analysis");
+    await fs.mkdir(outputPath, { recursive: true });
+    
+    await fs.writeFile(
+      path.join(outputPath, "component-analysis.json"),
+      JSON.stringify(analysis, null, 2)
+    );
 
-  const sourceFiles = project.getSourceFiles();
-  console.log(`Found ${sourceFiles.length} source files`);
-
-  const analysis = sourceFiles
-    .map(sourceFile => analyzeComponent(sourceFile))
-    .filter((a): a is ComponentAnalysis => a !== null);
-
-  return {
-    summary: {
-      totalFiles: analysis.length,
-      totalElements: analysis.reduce((sum, a) => sum + a.elements.length, 0),
-      totalStates: analysis.reduce((sum, a) => sum + a.stateCount, 0),
-      interactiveElements: analysis.reduce((sum, a) => 
-        sum + a.elements.filter(e => e.hasEvents).length, 0)
-    },
-    components: analysis
-  };
+    console.log(`Analysis complete! Results saved to ${outputPath}`);
+    return analysis;
+  } catch (error) {
+    console.error("Error during analysis:", error);
+    throw error;
+  }
 }
 
 if (require.main === module) {
   const projectPath = process.argv[2] || process.cwd();
-  console.log("Starting analysis...");
-  analyzeCodebase(projectPath)
-    .then(analysis => {
-      const outputPath = path.join(projectPath, "codebase-analysis.json");
-      console.log(`Writing analysis to: ${outputPath}`);
-      return fs.writeFile(
-        outputPath,
-        JSON.stringify(analysis, null, 2)
-      );
-    })
-    .then(() => console.log("Analysis complete!"))
-    .catch(error => {
-      console.error("Error during analysis:", error);
-      process.exit(1);
-    });
+  run(projectPath).catch(error => {
+    console.error(error);
+    process.exit(1);
+  });
 }
