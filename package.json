@@ -1,23 +1,37 @@
 {
-  "name": "indexing",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
-  "scripts": {
-    "start": "node dist/index.js",
-    "dev": "nodemon src/index.ts",
-    "build": "tsc",
-    "watch": "tsc -w",
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "name": "e2e",
+  "version": "0.0.7",
+  "description": "Playwright Tool",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/microsoft/playwright-mcp.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "homepage": "https://playwright.dev",
+  "engines": {
+    "node": ">=18"
+  },
+  "author": {
+    "name": "Microsoft Corporation"
+  },
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint .",
+    "watch": "tsc --watch",
+    "test": "playwright test",
+    "clean": "rm -rf lib",
+    "npm-publish": "npm run clean && npm run build && npm run test && npm publish"
+  },
   "devDependencies": {
     "@types/node": "^22.14.0",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@pinecone-database/pinecone": "^5.1.1",
+    "axios": "^1.8.4",
+    "dotenv": "^16.5.0",
+    "ts-morph": "^25.0.1"
   }
 }
