@@ -1,5 +1,5 @@
 import { pipeline } from '@xenova/transformers';
-import { ComponentAnalysis } from '../indexer';
+import { ComponentAnalysis } from './indexer';
 import fs from 'fs/promises';
 import path from 'path';
 
