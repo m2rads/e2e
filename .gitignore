@@ -3,3 +3,4 @@ code-index.json
 .env
 .env.local
 lib
+.analysis
