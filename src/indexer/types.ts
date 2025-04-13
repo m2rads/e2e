@@ -1,9 +1,9 @@
-import { Node, Type, SyntaxKind, ParameterDeclaration, TypeParameterDeclaration } from "ts-morph";
+import { Node, SyntaxKind, ParameterDeclaration, TypeParameterDeclaration } from 'ts-morph';
 
 export function extractTypes(node: Node) {
   const info: Record<string, any> = {};
-  
-  if ("getParameters" in node && typeof node.getParameters === "function") {
+
+  if ('getParameters' in node && typeof node.getParameters === 'function') {
     info.parameters = node.getParameters().map((p: ParameterDeclaration) => ({
       name: p.getName(),
       type: p.getType().getText(),
@@ -12,7 +12,7 @@ export function extractTypes(node: Node) {
     }));
   }
 
-  if ("getReturnType" in node && typeof node.getReturnType === "function") {
+  if ('getReturnType' in node && typeof node.getReturnType === 'function') {
     const returnType = node.getReturnType();
     info.returnType = {
       text: returnType.getText(),
@@ -22,7 +22,7 @@ export function extractTypes(node: Node) {
     };
   }
 
-  if ("getTypeParameters" in node && typeof node.getTypeParameters === "function") {
+  if ('getTypeParameters' in node && typeof node.getTypeParameters === 'function') {
     info.genericParameters = node.getTypeParameters().map((tp: TypeParameterDeclaration) => ({
       name: tp.getName(),
       constraint: tp.getConstraint()?.getText(),
@@ -118,7 +118,7 @@ export interface ComponentBehavior {
 }
 
 export interface WebPattern {
-  type: "component" | "form" | "layout";
+  type: 'component' | 'form' | 'layout';
   structure: ComponentStructure;
   behavior: ComponentBehavior;
 }
@@ -139,4 +139,4 @@ export interface CodeAnalysis {
     interactiveElements: number;
     statefulness: 'none' | 'low' | 'high';
   };
-} 
+}

@@ -16,8 +16,8 @@ export async function run(projectPath: string) {
 
   // Save code analysis
   await fs.writeFile(
-    path.join(outputDir, 'code-analysis.json'),
-    JSON.stringify(analysis, null, 2)
+      path.join(outputDir, 'code-analysis.json'),
+      JSON.stringify(analysis, null, 2)
   );
 
   return {

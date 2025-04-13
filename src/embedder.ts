@@ -5,11 +5,11 @@ import path from 'path';
 
 export class Embedder {
   private static instance: any;
-  
+
   static async getInstance() {
-    if (!this.instance) {
+    if (!this.instance)
       this.instance = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2');
-    }
+
     return this.instance;
   }
 
@@ -40,7 +40,7 @@ export class Embedder {
 
 export async function embedComponents(analysis: ComponentAnalysis[]) {
   const embeddings = await Promise.all(
-    analysis.map(component => Embedder.processComponent(component))
+      analysis.map(component => Embedder.processComponent(component))
   );
 
   const outputDir = path.join(process.cwd(), '.analysis');
@@ -63,12 +63,12 @@ export async function embedComponents(analysis: ComponentAnalysis[]) {
     }))
   };
   await fs.writeFile(
-    path.join(outputDir, 'metadata.json'),
-    JSON.stringify(metadata, null, 2)
+      path.join(outputDir, 'metadata.json'),
+      JSON.stringify(metadata, null, 2)
   );
 
   return {
     metadata,
     vectors
   };
-} 
+}
