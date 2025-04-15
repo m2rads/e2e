@@ -34,6 +34,7 @@
     "nodemon": "^3.1.9",
     "ts-morph": "^25.0.1",
     "ts-node": "^10.9.2",
+    "@playwright/test": "1.52.0-alpha-1743011787000",
     "typescript": "^5.8.3"
   },
   "dependencies": {
