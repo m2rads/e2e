@@ -4,3 +4,4 @@ code-index.json
 .env.local
 lib
 .analysis
+*.tgz
