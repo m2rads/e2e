@@ -332,6 +332,8 @@ class PlaywrightTestGenerator {
           continue;
         }
 
+        console.log('AI Response:', messageContent);
+
         console.log('Parsing generated tests...');
         const generatedTests = this._parseGeneratedTests(messageContent);
         console.log(`Generated ${generatedTests.length} test files from this chunk`);
@@ -409,14 +411,19 @@ Guidelines for test generation:
 6. Add detailed comments explaining test rationale
 7. Focus on testing functionality, not implementation details
 
-Format each test file with the following structure:
+IMPORTANT - Format Requirements:
+Each test file MUST follow this EXACT format:
+
+// Filename: example.spec.ts
+// Purpose: Brief description of the test
 \`\`\`typescript
-// [Filename: test-name.spec.ts]
-// Test description and purpose
 import { test, expect } from '@playwright/test';
-// [Test code here]
+// Test code here
 \`\`\`
-`;
+
+The filename comment MUST be on its own line exactly as shown above.
+Do not include any other text or formatting between the filename and the typescript block.
+Each test file should be separated by a blank line.`;
   }
 
   /**
@@ -462,18 +469,44 @@ Each test should be in a separate file with an appropriate name based on the com
    */
   private _parseGeneratedTests(aiResponse: string): TestFile[] {
     const testFiles: TestFile[] = [];
-    const testFilePattern = /```(?:typescript|javascript|ts|js)?\s*\/\/\s*\[Filename:\s*([\w\-\.\/]+)\]\s*([\s\S]*?)```/g;
+    
+    // Pattern 1: Match filename in comment followed by typescript block
+    const pattern1 = /\/\/\s*Filename:\s*([\w\-\.\/]+)[\s\S]*?```typescript([\s\S]*?)```/g;
+    
+    // Pattern 2: Original pattern as fallback
+    const pattern2 = /```(?:typescript|javascript|ts|js)?\s*\/\/\s*\[Filename:\s*([\w\-\.\/]+)\]\s*([\s\S]*?)```/g;
 
     let match;
-    while ((match = testFilePattern.exec(aiResponse)) !== null) {
-      const filename = match[1].trim();
-      const content = match[2].trim();
-
-      testFiles.push({
-        filename,
-        content
-      });
+    
+    // Try Pattern 1
+    while ((match = pattern1.exec(aiResponse)) !== null) {
+        const filename = match[1].trim();
+        const content = match[2].trim();
+        
+        console.log(`Found test file with Pattern 1: ${filename}`);
+        testFiles.push({
+            filename,
+            content
+        });
     }
+    
+    // If no files found, try Pattern 2
+    if (testFiles.length === 0) {
+        while ((match = pattern2.exec(aiResponse)) !== null) {
+            const filename = match[1].trim();
+            const content = match[2].trim();
+            
+            console.log(`Found test file with Pattern 2: ${filename}`);
+            testFiles.push({
+                filename,
+                content
+            });
+        }
+    }
+
+    // Log for debugging
+    console.log(`\nFound ${testFiles.length} test files to generate:`);
+    testFiles.forEach(file => console.log(`- ${file.filename}`));
 
     return testFiles;
   }
